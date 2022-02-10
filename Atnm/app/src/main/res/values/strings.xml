@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Atnm</string>
+
+    <!--Home Fragment-->
+    <string name="exchange_pairs">exchange pairs</string>
+
+</resources>
