@@ -24,5 +24,5 @@ data class Pairs(
 data class PairsWitheRate(
     val from: String,
     val to: String,
-    val rate: Float
+    val rate: String
 )

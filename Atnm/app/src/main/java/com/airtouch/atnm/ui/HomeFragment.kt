@@ -15,6 +15,7 @@ import com.airtouch.atnm.R
 import com.airtouch.atnm.models.Pairs
 import com.airtouch.atnm.models.PairsWitheRate
 import com.airtouch.atnm.models.Rates
+import java.text.DecimalFormat
 
 
 class HomeFragment : Fragment() {
@@ -49,11 +50,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun verification(from: String, to: String, path: Set<String> = setOf()) {
+        val decimalFormat = DecimalFormat("#.##")
+        val verDoubleCheck = checkIfRouteExists(from, to)
         if (path.contains(from)) {
             return
         }
 
-        val verDoubleCheck = checkIfRouteExists(from, to)
         for (i in 0 until listRates.size) {
             if (!verDoubleCheck) {
                 if (listRates[i].from == from) {
@@ -61,10 +63,14 @@ class HomeFragment : Fragment() {
                     verification(listRates[i].to, to, path + from)
                 }
             } else if (verDoubleCheck) {
+                val rateNumber = foundedRate * foundedRateList.reduce { acc, fl -> acc * fl }
+                val rateFormat = decimalFormat.format(rateNumber)
+
                 val newPairs = PairsWitheRate(
                     path.first(),
                     to,
-                    foundedRate * foundedRateList.reduce { acc, fl -> acc * fl })
+                    rateFormat
+                )
                 listNewPairs.add(newPairs)
                 foundedRateList.clear()
                 break
@@ -83,14 +89,13 @@ class HomeFragment : Fragment() {
                 val rate = list.firstOrNull { it.to == pair.to }
 
                 if (rate != null) {
-                    val newPairs = PairsWitheRate(rate.from, rate.to, rate.rate)
+                    val newPairs = PairsWitheRate(rate.from, rate.to, rate.rate.toString())
                     listNewPairs.add(newPairs)
                 } else {
                     listPairsWitheOutRate.add(Pairs(pair.from, pair.to))
                 }
             }
             listRates.addAll(exchangeInfo.rates.map { Rates(it.from, it.to, it.rate) })
-            Log.d("listPairsWitheOutRate", listPairsWitheOutRate.toString())
             listPairsWitheOutRate.forEach {
                 verification(it.from, it.to)
             }
